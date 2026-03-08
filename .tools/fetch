@@ -1,0 +1,113 @@
+#! /usr/bin/env -S python3 -u
+
+# pylint: disable=wrong-import-position
+
+import sys
+if sys.version_info < (3, 11):
+    raise RuntimeError('Python 3.11 or greater is required to run this script')
+
+import shutil
+import subprocess
+from pathlib import Path
+from urllib.request import urlretrieve
+from urllib.error import HTTPError
+
+components = {
+    'isptr': {
+        'ver': 'v1.9',
+        'url': 'https://github.com/gershnik/intrusive_shared_ptr/tarball/{ver}',
+        'unpacker': {
+            'type': 'tar',
+            'strip': 1
+        },
+        'dir': 'intrusive_shared_ptr',
+        'files': {
+            'inc/intrusive_shared_ptr/apple_cf_ptr.h': '{name}', 
+            'inc/intrusive_shared_ptr/common.h': '{name}',
+            'inc/intrusive_shared_ptr/intrusive_shared_ptr.h': '{name}',
+            'inc/intrusive_shared_ptr/python_ptr.h': '{name}'
+        }
+    }
+}
+
+
+MYDIR = Path(__file__).parent
+ROOT = MYDIR.parent
+DEST_DIR = ROOT / 'src' / 'cpp' / 'external'
+WORK_DIR = ROOT / 'build' / 'fetch'
+
+def dispatch(name, component):
+    src = WORK_DIR / component.get('dir', name)
+    dst = DEST_DIR / component.get('dir', name)
+    for s, d in component.get('files', {}).items():
+        d = d.format(name=Path(s).name)
+        shutil.copy2(src / s, dst / d)
+    print(f'Installed {name}')
+    
+def untar(name, component, archive):
+    directory = WORK_DIR / component.get('dir', name)
+    if archive.suffix in ('.tgz', '.gz'):
+        comp = 'z'
+    elif archive.suffix in ('.tbz', '.bz'):
+        comp = 'j'
+    else:
+        comp = ''
+
+    command = ['/usr/bin/tar', '-C', directory, f'-x{comp}f', archive]
+    subst = component['unpacker'].get('subst')
+    if subst is not None:
+        command += ['-s', subst]
+    strip = component['unpacker'].get('strip')
+    if strip is not None:
+        command += ['--strip-components', str(strip)]
+
+    subprocess.run(command, check=True)
+
+def fetch_url(name, component, unpacker):
+    directory = WORK_DIR / component.get('dir', name)
+    
+    shutil.rmtree(directory, ignore_errors=True)
+    if directory.exists():
+        print(f'Unable to remove {name} directory', file=sys.stderr)
+        sys.exit(1)
+    directory.mkdir()
+    url = component['url'].format(ver = component['ver'])
+    try:
+        path, _ = urlretrieve(url)
+    except HTTPError as ex:
+        print(f'Unable to fetch {url}: {ex}', file=sys.stderr)
+        sys.exit(1)
+    
+    try:
+        unpacker(name, component, Path(path))
+        print(f'Unpacked {name}')
+    finally:
+        Path(path).unlink()
+
+
+def get_fetcher(name, component):
+    if component.get('url'):
+        return fetch_url
+    
+    print(f"Dont know how to download {name}", file=sys.stderr)
+    sys.exit(1)
+        
+def get_unpacker(name, component):
+    component_type = component['unpacker']['type']
+    if component_type == 'tar':
+        return untar
+    
+    print(f"Dont know how to unpack {name}", file=sys.stderr)
+    sys.exit(1)
+
+def main():
+    WORK_DIR.mkdir(parents=True, exist_ok=True)
+    for name, component in components.items():
+        fetcher = get_fetcher(name, component)
+        unpacker = get_unpacker(name, component)
+        fetcher(name, component, unpacker)
+        dispatch(name, component)
+
+
+if __name__ == '__main__':
+    main()

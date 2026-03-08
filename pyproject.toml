@@ -1,0 +1,64 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools.dynamic]
+version = {attr = "processtitle.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+
+[project]
+name = "processtitle"
+dynamic = ["version"]
+authors= [
+    { name = 'Eugene Gershnik', email='gershnik@hotmail.com'}
+]
+description = 'Customize process "title" as reported by ps and similar tools'
+readme="README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE", "Acknowledgments.md"]
+requires-python = ">=3.10"
+keywords = [
+    'setproctitle', 'proctitle', 'process title', 'process name'
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: BSD :: FreeBSD",
+    "Operating System :: POSIX :: BSD :: NetBSD",
+    "Operating System :: POSIX :: BSD :: OpenBSD",
+    "Operating System :: POSIX :: SunOS/Solaris",
+    
+    "Intended Audience :: Developers",
+    
+    "Topic :: Software Development",
+
+    "Programming Language :: C++",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+
+    "Typing :: Typed"
+]
+
+[project.urls]
+Homepage = 'https://github.com/gershnik/processtitle'
+Documentation = 'https://github.com/gershnik/processtitle'
+Issues = 'https://github.com/gershnik/processtitle/issues'
+Changelog = 'https://github.com/gershnik/processtitle/blob/master/CHANGELOG.md'
