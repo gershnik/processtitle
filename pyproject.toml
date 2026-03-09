@@ -5,12 +5,14 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["processtitle"]
+
+[tool.setuptools.package-dir]
+processtitle = "src/processtitle"
 
 [tool.setuptools.dynamic]
 version = {attr = "processtitle.__version__"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
