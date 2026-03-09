@@ -12,6 +12,7 @@ on:
       - 'CHANGELOG.md'
       - 'Acknowledgments.md'
       - '.github/workflows/artifacts.yml'
+      - '.github/workflows/release.yml'
   workflow_dispatch:
 
 

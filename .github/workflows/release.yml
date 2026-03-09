@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-artifacts:
+    uses: ./.github/workflows/artifacts.yml
+
+  main:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: build-artifacts
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts
+          path: ./dist
+
+      - name: Get release name
+        shell: python
+        run: |
+          import os
+          ref = os.environ['GITHUB_REF']
+          name = ref[ref.rfind('/') + 2:]
+          with open(os.environ['GITHUB_ENV'], 'w') as env:
+            print('RELEASE_NAME=' + name, file=env)
+
+      - name: Zip Wheels
+        shell: bash
+        run: |
+          tar -czf dist/processtitle-${{ env.RELEASE_NAME }}-wheels.tar.gz dist/*.whl
+          rm -rf dist/*.whl
+
+      - name: Make release
+        uses: softprops/action-gh-release@v2
+        id: create_release
+        with:
+          draft: true
+          prerelease: false
+          name: ${{ env.RELEASE_NAME }}
+          body: ...edit me...
+          files: |
+            dist/*.tar.gz
