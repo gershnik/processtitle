@@ -138,7 +138,7 @@ tool that displays process info. Note that on some Linux variants (e.g. Alpine) 
 by the original process executable name. For example: `{python3} your title`.
 
 To change the title, `processtitle` uses the following methods:
-* [PR_SET_MM](https://www.man7.org/linux/man-pages/man2/PR_SET_MM.2const.html) call.
+* [PR_SET_MM](https://www.man7.org/linux/man-pages/man2/PR_SET_MM.2const.html).
 * [PR_SET_NAME](https://www.man7.org/linux/man-pages/man2/PR_SET_NAME.2const.html)
 
 `processtitle.set_to()` returns `True` if at least one of these methods succeeded.
