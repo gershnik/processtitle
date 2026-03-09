@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [0.2] - 2026-03-09
+
 ### Fixed
 - Output of plain `ps` (without `-ef` or `a` flags) on Linux
 - Bogus cpp file removal messages on package uninstall
@@ -15,3 +17,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Initial version
 
 [0.1.0]: https://github.com/gershnik/processtitle/releases/0.1.0
+[0.2]: https://github.com/gershnik/processtitle/releases/0.2
