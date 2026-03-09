@@ -134,12 +134,11 @@ In addition:
 ### Linux
 
 On Linux you will be able to see the process title in the output of `ps` or `top` commands, as well, as with any other
-tool that displays process info. Note that on some Linux variants (e.g. Alpine) the title might be prefixed or suffixed 
-by the original process executable name. For example: `{python3} your title`.
+tool that displays process info.
 
 To change the title, `processtitle` uses the following methods:
-* [PR_SET_MM](https://www.man7.org/linux/man-pages/man2/PR_SET_MM.2const.html).
-* [PR_SET_NAME](https://www.man7.org/linux/man-pages/man2/PR_SET_NAME.2const.html)
+* [PR_SET_MM](https://www.man7.org/linux/man-pages/man2/PR_SET_MM.2const.html) call.
+* [PR_SET_NAME](https://www.man7.org/linux/man-pages/man2/PR_SET_NAME.2const.html) call.
 
 `processtitle.set_to()` returns `True` if at least one of these methods succeeded.
 

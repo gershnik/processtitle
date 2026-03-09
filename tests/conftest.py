@@ -22,6 +22,7 @@ IS_PLATFORM_UNSUPPORTED = sys.platform != "darwin" and \
 supported_platforms_only = pytest.mark.skipif(IS_PLATFORM_UNSUPPORTED, reason="unsupported platform")
 unsupported_platforms_only = pytest.mark.skipif(not IS_PLATFORM_UNSUPPORTED, reason="not an unsupported platform")
 darwin_only = pytest.mark.skipif(sys.platform != "darwin", reason="macOS only")
+linux_only = pytest.mark.skipif(sys.platform != "linux", reason="Linux only")
 subinterpreters_available = pytest.mark.skipif(sys.version_info < (3, 14), reason="subinterpreters require Python 3.14+")
 fork_available = pytest.mark.skipif(sys.platform.startswith("win32"), reason="fork is not present on Windows")
 

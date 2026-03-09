@@ -46,6 +46,7 @@ jobs:
         pip install pytest
         echo "::endgroup::"
         echo "::group::Build"
+        rm -rf build
         pip install -v .
         echo "::endgroup::"
         pytest -vv -s

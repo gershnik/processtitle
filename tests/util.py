@@ -109,3 +109,29 @@ def get_title_from_launch_services(pid: int|None = None):
     if (m := re.match(r'^"(.*)" ASN:0x[0-9a-fA-F]+-0x[0-9a-fA-F]+: *$', first_line)) is not None:
         return m.group(1)
     return None
+
+def get_linux_title_pair(pid: int|None = None):
+    
+    strpid = str(pid if pid is not None else os.getpid())
+    def title_from_field(field):
+        cmd = ['ps', '-A', f'-opid,{field}']
+        proc = subprocess.Popen(cmd, cwd=PACKAGE_PATH, encoding='utf-8',
+                                stdout=subprocess.PIPE)
+        
+        assert proc.stdout is not None
+
+        ret = None
+        for line in proc.stdout:
+            if (m := re.search(r'^\s*' + strpid + ' ', line)):
+                ret = line[m.end(0):].strip()
+                break
+        retcode = proc.wait()
+        if retcode != 0:
+            raise subprocess.CalledProcessError(retcode, proc.args)
+        if ret is not None and IS_ALPINE:
+            ret = re.sub(r'^{.*} ', '', ret)
+        return ret
+    
+    if IS_ALPINE:
+        return (title_from_field('args'), title_from_field('comm'))
+    return (title_from_field(field) for field in ('cmd', 'comm'))

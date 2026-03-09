@@ -4,7 +4,7 @@
 import textwrap
 
 from .util import run_script, filter_stderr, grep_stderr, load_json_result
-from .conftest import supported_platforms_only, darwin_only, unsupported_platforms_only
+from .conftest import supported_platforms_only, darwin_only, linux_only, unsupported_platforms_only
 
 @supported_platforms_only
 def test_set_title():
@@ -237,6 +237,34 @@ def test_macos_activity_monitor_fork_safe():
         'system': 'lala " 😸 meow',
         'ls': None,
         'last': 'lala " 😸 meow'
+    }
+    assert proc.returncode == 0
+
+@linux_only
+def test_linux_cmd_comm_both_changed():
+    proc = run_script(text=textwrap.dedent('''
+    import processtitle
+    import json
+    from util import get_linux_title_pair
+                        
+    processtitle.prepare()
+    ret = processtitle.set_to('lala')
+    cmd, comm = get_linux_title_pair()
+    res = {
+        'ret': ret,
+        'cmd': cmd,
+        'comm': comm,
+        'last': processtitle.last_set()
+    }
+    print(json.dumps(res))
+    '''))
+    
+    assert filter_stderr(proc.stderr) == ""
+    assert load_json_result(proc.stdout) == {
+        'ret': True,
+        'cmd': 'lala',
+        'comm': 'lala',
+        'last': 'lala'
     }
     assert proc.returncode == 0
 
