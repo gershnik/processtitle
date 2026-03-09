@@ -1,0 +1,119 @@
+name: Artifacts
+on:
+  workflow_dispatch:
+
+jobs:
+
+  sdist:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v4
+
+      - name: Build sdist
+        run: |
+          pip install build
+          python -m build . --sdist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: ./dist/*
+
+  wheel-linux:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
+        python-version: [cp310, cp311, cp312, cp313, cp314, pp]
+        arch: [x86_64, aarch64, ppc64le, riscv64]
+        exclude:
+          - {python-version: pp, arch: ppc64le}
+          - {python-version: pp, arch: riscv64}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.4.0
+        env:
+          CIBW_BUILD: ${{matrix.python-version}}*
+          CIBW_ARCHS: ${{matrix.arch}}
+          CIBW_ENABLE: all
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-linux-${{ matrix.python-version }}-${{matrix.arch}}
+          path: ./wheelhouse/*.whl
+
+  wheel-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
+        python-version: [cp310, cp311, cp312, cp313, cp314, pp]
+
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.4.0
+        env:
+          CIBW_BUILD: ${{matrix.python-version}}*
+          CIBW_ARCHS: x86_64 arm64 universal2
+          CIBW_ENABLE: all
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-macos-${{ matrix.python-version }}
+          path: ./wheelhouse/*.whl
+
+  wheel-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
+        python-version: [cp310, cp311, cp312, cp313, cp314, pp]
+
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.4.0
+        env:
+          CIBW_BUILD: ${{matrix.python-version}}*
+          CIBW_ARCHS: AMD64 ARM64
+          CIBW_ENABLE: all
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-windows-${{ matrix.python-version }}
+          path: ./wheelhouse/*.whl
+
+  merge:
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - sdist
+      - wheel-linux
+      - wheel-macos
+      - wheel-windows
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: artifacts
+          delete-merged: true
