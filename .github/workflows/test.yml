@@ -1,0 +1,44 @@
+name: Test
+
+on: 
+  push:
+    branches: 
+      - '*'
+      - '*/**'
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+      - 'LICENSE'
+      - 'CHANGELOG.md'
+      - 'Acknowledgments.md'
+      - '.github/workflows/artifacts.yml'
+  workflow_dispatch:
+
+
+jobs:
+  matrix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-24.04, windows-latest]
+        python-version: [
+          "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t",
+          "pypy-3.10", "pypy-3.11"
+        ]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        id: setup-python
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: Install Nox
+        run: pip install Nox
+
+      - name: Test
+        run: nox --sessions test --force-python ${{ steps.setup-python.outputs.python-path }} -- -vv -s
