@@ -1,0 +1,52 @@
+name: Test Extra
+
+on: 
+  push:
+    branches: 
+      - '*'
+      - '*/**'
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+      - 'LICENSE'
+      - 'CHANGELOG.md'
+      - 'Acknowledgments.md'
+      - '.github/workflows/artifacts.yml'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/test.yml'
+  workflow_dispatch:
+
+jobs:
+  selfhosted:
+    concurrency: ${{ matrix.remote_host }}
+    runs-on: [self-hosted, server]
+    strategy:
+      fail-fast: false
+      matrix:
+        remote_host: [freebsd-14, openbsd-7-5, netbsd-10, alpine-3, omnios]
+        
+    steps:
+    - name: Run remote build
+      run: |
+        "$RUNNER_TOOLS_PATH"/run-agent gh-${{ matrix.remote_host }} <<'EOF'
+        set -e
+        echo "::group::Checkout"
+        if [ ! -d work/processtitle ]; then
+          git clone https://github.com/gershnik/processtitle.git work/processtitle
+        fi
+        cd work/processtitle
+        git fetch --all
+        git fetch -f --prune --tags
+        git reset --hard ${{ github.sha }}
+        echo "::endgroup::"
+        echo "::group::Setup Environment"
+        rm -rf .venv
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install pytest
+        echo "::endgroup::"
+        echo "::group::Build"
+        pip install -v .
+        echo "::endgroup::"
+        pytest -vv -s
+        EOF
