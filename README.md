@@ -135,12 +135,13 @@ In addition:
 
 On Linux you will be able to see the process title in the output of `ps` or `top` commands, as well, as with any other
 tool that displays process info. Note that on some Linux variants (e.g. Alpine) the title might be prefixed or suffixed 
-by the original process executable name. For example: `{python3} your title`. 
+by the original process executable name. For example: `{python3} your title`.
 
 To change the title, `processtitle` uses the following methods:
-* [PR_SET_MM](https://www.man7.org/linux/man-pages/man2/PR_SET_MM.2const.html) call, if available and works. 
-* Otherwise [PR_SET_NAME](https://www.man7.org/linux/man-pages/man2/PR_SET_NAME.2const.html)
+* [PR_SET_MM](https://www.man7.org/linux/man-pages/man2/PR_SET_MM.2const.html) call.
+* [PR_SET_NAME](https://www.man7.org/linux/man-pages/man2/PR_SET_NAME.2const.html)
 
+`processtitle.set_to()` returns `True` if at least one of these methods succeeded.
 
 ### macOS
 
@@ -167,6 +168,7 @@ To change the title, `processtitle` uses the following methods:
 * Changing the content of native (not Python's) `argv[0]` (while preserving the rest of `argv` and relocating `environ`).
 * If `fork_safe_only` is `False` undocumented Launch Services calls
 
+`processtitle.set_to()` returns `True` if at least one of these methods succeeded.
 
 ### Windows
 

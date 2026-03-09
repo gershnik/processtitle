@@ -233,11 +233,14 @@ static bool usePrSetName(const char * title) {
 bool linuxSetProcessTitle(const char * title) {
 
     try {
+        bool ret = false;
         if (useSetMm(title))
-            return true;
+            ret = true;
 
         if (usePrSetName(title))
-            return true;
+            ret = true;
+
+        return ret;
         
     } catch(std::exception & ex) {
         logDebug(std::string("unhandled exception in linuxSetProcessTitle: ") + ex.what());
