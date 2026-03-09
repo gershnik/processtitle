@@ -84,13 +84,13 @@ SPT_DEBUG=1 your_script_that_uses_processtitle
 
 ## Thread and other safety
 
-`proctitle` _itself_ is thread-safe - all its operations are protected by a mutex. However, 
+`processtitle` _itself_ is thread-safe - all its operations are protected by a mutex. However, 
 _the effects_ of changing process title are not. On every platform, changing the title modifies
 some globals process information. If this information is accessed by another thread at the same
 time Bad Things Will Happen. Therefore, it is advisable to only change the title before other
 threads are running or when you are absolutely sure they are suspended.
 
-On some platforms, `proctitle` modifies pointers visible to native code (for example `argv[1]...` and 
+On some platforms, `processtitle` modifies pointers visible to native code (for example `argv[1]...` and 
 `environ` on many Unix systems). It never deallocates the memory pointed by these so any native code that 
 uses cached values of such pointer should be safe. Python's `sys.argv` and `os.environ` should be 
 completely unaffected by any of these manipulations.
@@ -130,7 +130,7 @@ On Linux you will be able to see the process title in the output of `ps` or `top
 tool that displays process info. Note that on some Linux variants (e.g. Alpine) the title might be prefixed or suffixed 
 by the original process executable name. For example: `{python3} your title`. 
 
-To change the title, `proctitle` uses the following methods:
+To change the title, `processtitle` uses the following methods:
 * [PR_SET_MM](https://www.man7.org/linux/man-pages/man2/PR_SET_MM.2const.html) call, if available and works. 
 * Otherwise [PR_SET_NAME](https://www.man7.org/linux/man-pages/man2/PR_SET_NAME.2const.html)
 
@@ -151,12 +151,12 @@ unpredictably. Note that some popular libraries such as `gunicorn` may use fork(
 
 Because of this issue, if you must use fork() on macOS you have two options:
 
-1. Pass `fork_safe_only=True` argument to `proctitle.prepare()` in the parent process. Doing so will prevent 
+1. Pass `fork_safe_only=True` argument to `processtitle.prepare()` in the parent process. Doing so will prevent 
   use of any non-fork-safe APIs but will also preclude customized process title from being shown in Activity Monitor.
 
-2. Alternatively, if feasible, call `proctitle.prepare()` **after** the last `fork()` in the parent process. 
+2. Alternatively, if feasible, call `processtitle.prepare()` **after** the last `fork()` in the parent process. 
 
-To change the title, `proctitle` uses the following methods:
+To change the title, `processtitle` uses the following methods:
 * Changing the content of native (not Python's) `argv[0]` (while preserving the rest of `argv` and relocating `environ`).
 * If `fork_safe_only` is `False` undocumented Launch Services calls
 
@@ -178,7 +178,7 @@ processes in two ways:
 2. In Task Manager details view. If the "Command Line" column is not present, right-click the columns header,
   choose "Select columns" and check "Command Line" entry in the list.
 
-To change the title, `proctitle` uses modifies/replaces partially-documented [RTL_USER_PROCESS_PARAMETERS](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-rtl_user_process_parameters) via undocumented or partially documented calls.
+To change the title, `processtitle` uses modifies/replaces partially-documented [RTL_USER_PROCESS_PARAMETERS](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-rtl_user_process_parameters) via undocumented or partially documented calls.
 
 ### BSDs
 
@@ -186,7 +186,7 @@ On {Free|Net|Open}BSD you will be able to see the process title in the output of
 as with any other tool that displays process info. All of these platforms will, in general, add the original 
 executable name (e.g. `python3`) to the actual title either as a prefix or a suffix.
 
-To change the title, `proctitle` uses documented `setproctitle()` call ([FreeBSD](https://man.freebsd.org/cgi/man.cgi?query=setproctitle&sektion=3&format=html), [NetBSD](https://man.netbsd.org/NetBSD-10.1/setproctitle.3), [OpenBSD](https://man.openbsd.org/setproctitle.3)). 
+To change the title, `processtitle` uses documented `setproctitle()` call ([FreeBSD](https://man.freebsd.org/cgi/man.cgi?query=setproctitle&sektion=3&format=html), [NetBSD](https://man.netbsd.org/NetBSD-10.1/setproctitle.3), [OpenBSD](https://man.openbsd.org/setproctitle.3)). 
 
 
 ### Illumos
@@ -194,5 +194,5 @@ To change the title, `proctitle` uses documented `setproctitle()` call ([FreeBSD
 On Illumos by default the `ps` command shows process title captured at process creation. To see the current one pass
 the `-F` [option](https://man.omnios.org/man1/ps).
 
-To change the title, `proctitle` changes the content of native (not Python's) `argv[0]` (while preserving the rest of `argv` and relocating `environ`).
+To change the title, `processtitle` changes the content of native (not Python's) `argv[0]` (while preserving the rest of `argv` and relocating `environ`).
 
