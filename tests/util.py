@@ -21,7 +21,7 @@ def run_script(*, text: str|None = None, cmd = None):
     if cmd is None:
         cmd = [sys.executable, '-W', 'ignore']
     env = os.environ.copy()
-    env['PYTHONPATH'] = str(PACKAGE_PATH.resolve())
+    env['PYTHONPATH'] = os.pathsep.join([str(PACKAGE_PATH.resolve())] + sys.path)
     env['PYTHONWARNINGS'] = 'ignore'
     return subprocess.run(cmd, cwd=PACKAGE_PATH, encoding='utf-8',
                             env=env,
@@ -61,7 +61,7 @@ def get_title_from_system(pid: int|None = None):
     
     strpid = str(pid if pid is not None else os.getpid())
     if not plat.startswith('win'):
-        cmd = ['ps', '-o' "pid,args"]
+        cmd = ['ps', '-A', '-opid,args']
         if plat.startswith('solaris'):
             cmd += ['-F']
         proc = subprocess.Popen(cmd, cwd=PACKAGE_PATH, encoding='utf-8',

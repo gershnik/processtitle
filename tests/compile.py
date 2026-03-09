@@ -29,6 +29,8 @@ def get_cc() -> tuple[list[str], dict[str,str]] | tuple[None, None]:
         cmd = ['powershell', '-c', "Get-CimInstance MSFT_VSInstance -Namespace root/cimv2/vs | ConvertTo-Json"]
         out = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, encoding='utf-8').stdout
         data = json.loads(out)
+        if not isinstance(data, list):
+            data = [data]
         latest = None
         latestVersion = None
         for item in data:
@@ -93,7 +95,7 @@ def get_mainlib():
     
     elif sys.platform == 'win32':
         libdir = installed_platbase / 'libs'
-        ret = f'python{sysconfig.get_config_var("py_version_nodot")}.lib'
+        ret = f'python{sysconfig.get_config_var("py_version_nodot_plat")}.lib'
         if (libdir / ret).exists():
             return libdir / ret
 
