@@ -1,5 +1,11 @@
 # processtitle
 
+[![License](https://img.shields.io/badge/license-BSD-brightgreen.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![python](https://img.shields.io/badge/python->=3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![pypi](https://img.shields.io/pypi/v/processtitle)](https://pypi.org/project/processtitle)
+[![PyPI Downloads](https://static.pepy.tech/badge/processtitle)](https://pepy.tech/projects/processtitle)
+
+
 This Python extension module allows you to customize process "title" as reported by `ps`, `top`, Activity Monitor,
 Task Manager and similar tools.
 

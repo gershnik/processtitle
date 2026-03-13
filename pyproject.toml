@@ -33,7 +33,7 @@ keywords = [
     'setproctitle', 'proctitle', 'process title', 'process name'
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
 
     "Operating System :: POSIX :: Linux",
     "Operating System :: MacOS :: MacOS X",
