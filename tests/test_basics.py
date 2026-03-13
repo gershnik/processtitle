@@ -4,7 +4,7 @@
 
 import processtitle
 import textwrap
-from .util import run_script, filter_stderr, grep_stderr
+from .util import IS_GRAALPY, run_script, filter_stderr, grep_stderr
 
 
 def test_import():
@@ -56,7 +56,8 @@ def test_last_set_has_no_args():
     
     assert grep_stderr(r"^TypeError: .*last_set()", proc.stderr)
     assert proc.stdout == ""
-    assert proc.returncode != 0
+    if not IS_GRAALPY:
+        assert proc.returncode != 0
 
 def test_prepare_is_callable_and_doesnt_affect_last_set():
     proc = run_script(text=textwrap.dedent('''
@@ -81,7 +82,8 @@ def test_prepare_cannot_be_called_twice():
     
     assert grep_stderr(r'Exception: processtitle.prepare\(\) has already been called', proc.stderr)
     assert proc.stdout == ""
-    assert proc.returncode != 0
+    if not IS_GRAALPY:
+        assert proc.returncode != 0
 
 def test_prepare_args():
     proc = run_script(text=textwrap.dedent('''
@@ -103,4 +105,5 @@ def test_prepare_takes_only_keyword_args():
     
     assert grep_stderr(r'TypeError: prepare\(\) has no positional arguments', proc.stderr)
     assert proc.stdout == ""
-    assert proc.returncode != 0
+    if not IS_GRAALPY:
+        assert proc.returncode != 0

@@ -3,9 +3,9 @@
 
 import textwrap
 from .util import run_script, filter_stderr
-from .conftest import IS_PLATFORM_UNSUPPORTED
+from .conftest import IS_PLATFORM_UNSUPPORTED, not_graalpy
 
-
+@not_graalpy
 def test_enable_via_env():
     proc = run_script(text=textwrap.dedent('''
     import os

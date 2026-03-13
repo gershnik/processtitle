@@ -27,6 +27,8 @@ struct Overloads : Ts... { using Ts::operator()...; };
 template<class T>
 constexpr bool dependentFalse = false;
 
+#ifndef _WIN32
+
 class FileDescriptor {
 public:
     FileDescriptor() noexcept = default;
@@ -112,5 +114,7 @@ inline auto readFile(const FileDescriptor & desc, void * buf, io_size_t nbyte) -
         throw std::system_error(std::error_code(errno, std::system_category()));
     return ret;
 }
+
+#endif
 
 #endif

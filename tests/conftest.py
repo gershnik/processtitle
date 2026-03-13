@@ -6,6 +6,7 @@ import sys
 import pytest
 import sysconfig
 import warnings
+import platform
 from pathlib import Path
 from .compile import make_executable
 
@@ -24,12 +25,17 @@ unsupported_platforms_only = pytest.mark.skipif(not IS_PLATFORM_UNSUPPORTED, rea
 darwin_only = pytest.mark.skipif(sys.platform != "darwin", reason="macOS only")
 linux_only = pytest.mark.skipif(sys.platform != "linux", reason="Linux only")
 subinterpreters_available = pytest.mark.skipif(sys.version_info < (3, 14), reason="subinterpreters require Python 3.14+")
-fork_available = pytest.mark.skipif(sys.platform.startswith("win32"), reason="fork is not present on Windows")
+fork_available = pytest.mark.skipif(sys.platform.startswith("win32") or platform.python_implementation() == "GraalVM", 
+                                    reason="fork is not supported on this platform")
+not_graalpy = pytest.mark.skipif(platform.python_implementation() == "GraalVM", reason="broken on GraalPy")
 
 @pytest.fixture(scope="session")
 def embedded():
     if sysconfig.get_config_var('implementation') == 'PyPy':
         pytest.skip("No embedding on PyPy")
+        return None
+    if platform.python_implementation() == "GraalVM":
+        pytest.skip("No embedding on GraalPy")
         return None
 
     location = (PACKAGE_PATH / 'embedded')

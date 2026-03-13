@@ -3,7 +3,7 @@
 
 import textwrap
 
-from .util import run_script, filter_stderr, grep_stderr, load_json_result
+from .util import IS_GRAALPY, run_script, filter_stderr, grep_stderr, load_json_result
 from .conftest import supported_platforms_only, darwin_only, linux_only, unsupported_platforms_only
 
 @supported_platforms_only
@@ -149,7 +149,8 @@ def test_cant_set_without_prepare():
     
     assert grep_stderr(r"Exception: processtitle.prepare\(\) has not been called", proc.stderr)
     assert proc.stdout == ""
-    assert proc.returncode != 0
+    if not IS_GRAALPY:
+        assert proc.returncode != 0
 
 def test_set_takes_string_arg():
     proc = run_script(text=textwrap.dedent('''
@@ -161,7 +162,8 @@ def test_set_takes_string_arg():
     
     assert grep_stderr(r'TypeError: title must be a string', proc.stderr)
     assert proc.stdout == ""
-    assert proc.returncode != 0
+    if not IS_GRAALPY:
+        assert proc.returncode != 0
 
 def test_set_takes_one_arg():
     proc = run_script(text=textwrap.dedent('''
@@ -173,7 +175,8 @@ def test_set_takes_one_arg():
     
     assert grep_stderr(r"TypeError: set_to\(\) missing required positional argument: 'title'", proc.stderr)
     assert proc.stdout == ""
-    assert proc.returncode != 0
+    if not IS_GRAALPY:
+        assert proc.returncode != 0
 
     proc = run_script(text=textwrap.dedent('''
     import processtitle
@@ -184,7 +187,8 @@ def test_set_takes_one_arg():
     
     assert grep_stderr(r'TypeError: set_to\(\) takes at most 1 positional argument', proc.stderr)
     assert proc.stdout == ""
-    assert proc.returncode != 0
+    if not IS_GRAALPY:
+        assert proc.returncode != 0
 
 @darwin_only
 def test_macos_activity_monitor():

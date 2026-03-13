@@ -4,17 +4,17 @@
 import sys
 import os
 import subprocess
-import errno
+import platform
 import re
 import sysconfig
 import json
 
 from pathlib import Path
-from typing import IO
 
 
 PACKAGE_PATH = Path(__file__).parent
 IS_PYPY = sysconfig.get_config_var('implementation') == 'PyPy'
+IS_GRAALPY = platform.python_implementation() == "GraalVM"
 IS_ALPINE = sysconfig.get_platform().startswith('linux') and Path("/etc/alpine-release").exists()
 
 def run_script(*, text: str|None = None, cmd = None):
@@ -64,12 +64,11 @@ def get_title_from_system(pid: int|None = None):
         cmd = ['ps', '-A', '-opid,args']
         if plat.startswith('solaris'):
             cmd += ['-F']
-        proc = subprocess.Popen(cmd, cwd=PACKAGE_PATH, encoding='utf-8',
-                                stdout=subprocess.PIPE)
     else:
-        proc = subprocess.Popen('chcp 65001 && powershell -c "Get-WmiObject Win32_Process | Select-Object ProcessId, CommandLine"', 
-                                cwd=PACKAGE_PATH, encoding='utf-8',
-                                stdout=subprocess.PIPE, shell=True)
+        cmd = ['winps.cmd']
+        
+    proc = subprocess.Popen(cmd, cwd=PACKAGE_PATH, encoding='utf-8',
+                            stdout=subprocess.PIPE)
         
     
     assert proc.stdout is not None
