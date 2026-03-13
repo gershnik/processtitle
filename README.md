@@ -41,7 +41,7 @@ on ancient Linux kernels, Windows XP etc. etc. If you are stuck with a very old 
 
 ## Requirements
 
-* Python >= 3.10 capable of loading native extensions
+* Python >= 3.10 capable of loading native extensions. In particular, CPython, PyPy and GraalPy are all supported.
 * If your platform doesn't have a binary wheel available, you will need:
   * A C++ compiler capable of compiling C++20 (GCC 10.2 or above and CLang 13 or above are known to work)
   * Python development libraries available (like `python3-dev` package in most Linux distributions)

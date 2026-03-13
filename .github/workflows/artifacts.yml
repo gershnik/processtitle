@@ -28,11 +28,13 @@ jobs:
       fail-fast: false
       matrix:
         #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
-        python-version: [cp310, cp311, cp312, cp313, cp314, pp]
+        python-version: [cp310, cp311, cp312, cp313, cp314, pp, gp]
         arch: [x86_64, aarch64, ppc64le, riscv64]
         exclude:
           - {python-version: pp, arch: ppc64le}
           - {python-version: pp, arch: riscv64}
+          - {python-version: gp, arch: ppc64le}
+          - {python-version: gp, arch: riscv64}
 
     steps:
       - name: Checkout
@@ -60,7 +62,7 @@ jobs:
       fail-fast: false
       matrix:
         #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
-        python-version: [cp310, cp311, cp312, cp313, cp314, pp]
+        python-version: [cp310, cp311, cp312, cp313, cp314, pp, gp]
 
     steps:
       - name: Checkout repos
@@ -85,7 +87,7 @@ jobs:
       fail-fast: false
       matrix:
         #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
-        python-version: [cp310, cp311, cp312, cp313, cp314, pp]
+        python-version: [cp310, cp311, cp312, cp313, cp314, pp, gp]
 
     steps:
       - name: Checkout repos

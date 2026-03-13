@@ -49,5 +49,5 @@ jobs:
         rm -rf build
         pip install -v .
         echo "::endgroup::"
-        pytest -vv -s
+        pytest -vv -s --color=yes
         EOF
