@@ -59,41 +59,56 @@ def load_json_result(text:str):
 def get_title_from_system(pid: int|None = None):
     plat = sysconfig.get_platform()
     
-    strpid = str(pid if pid is not None else os.getpid())
+    if pid is None:
+        pid = os.getpid()
+    
     if not plat.startswith('win'):
         cmd = ['ps', '-A', '-opid,args']
         if plat.startswith('solaris'):
             cmd += ['-F']
-    else:
-        cmd = ['winps.cmd']
-        
-    proc = subprocess.Popen(cmd, cwd=PACKAGE_PATH, encoding='utf-8',
-                            stdout=subprocess.PIPE)
-        
-    
-    assert proc.stdout is not None
 
-    ret = None
-    for line in proc.stdout:
-        if (m := re.search(r'^\s*' + strpid + ' ', line)):
-            ret = line[m.end(0):].strip()
-            break
-    retcode = proc.wait()
-    if retcode != 0:
-        raise subprocess.CalledProcessError(retcode, proc.args)
-    if ret is not None:
-        if plat.startswith('freebsd') or plat.startswith('dragonfly'):
-            suffix = ret.rfind(' (')
-            if suffix >= 0:
-                ret = ret[0:suffix]
-        elif plat.startswith('netbsd') or plat.startswith('openbsd'):
-            ret = re.sub(r'^.*?: ', '', ret)
-            suffix = ret.rfind(' (')
-            if suffix >= 0:
-                ret = ret[0:suffix]
-        elif IS_ALPINE:
-            ret = re.sub(r'^{.*} ', '', ret)
-    return ret
+        proc = subprocess.Popen(cmd, cwd=PACKAGE_PATH, encoding='utf-8',
+                                stdout=subprocess.PIPE)
+            
+        
+        assert proc.stdout is not None
+
+        ret = None
+        expr = re.compile(r'^\s*' + str(pid) + ' ')
+        for line in proc.stdout:
+            if (m := expr.search(line)):
+                ret = line[m.end(0):].strip()
+                break
+        retcode = proc.wait()
+        if retcode != 0:
+            raise subprocess.CalledProcessError(retcode, proc.args)
+        if ret is not None:
+            if plat.startswith('freebsd') or plat.startswith('dragonfly'):
+                suffix = ret.rfind(' (')
+                if suffix >= 0:
+                    ret = ret[0:suffix]
+            elif plat.startswith('netbsd') or plat.startswith('openbsd'):
+                ret = re.sub(r'^.*?: ', '', ret)
+                suffix = ret.rfind(' (')
+                if suffix >= 0:
+                    ret = ret[0:suffix]
+            elif IS_ALPINE:
+                ret = re.sub(r'^{.*} ', '', ret)
+        return ret
+    else:
+        cmd = ['powershell', '-NonInteractive', '-NoLogo', '-c', 
+               '$bytes=[System.Text.Encoding]::UTF8.GetBytes(@(Get-WmiObject Win32_Process | ConvertTo-Json));' #no comma
+               '[Console]::OpenStandardOutput().Write($bytes, 0, $bytes.Length)']
+        out = subprocess.run(cmd, stdout=subprocess.PIPE, encoding='utf-8', check=True).stdout
+        data = json.loads(out)
+        if not isinstance(data, list):
+            data = [data]
+        for item in data:
+            if item['ProcessId'] == pid:
+                return item['CommandLine']
+            
+        return None
+    
     
 def get_title_from_launch_services(pid: int|None = None):
     strpid = str(pid if pid is not None else os.getpid())
