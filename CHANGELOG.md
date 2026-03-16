@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.1] - 2026-03-16
+
 ### Added
 - Support for DragonFly BSD
 - Ability to directly invoke the module and a wrapper script `processtitle`.
@@ -33,3 +35,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.1.0]: https://github.com/gershnik/processtitle/releases/0.1.0
 [0.2]: https://github.com/gershnik/processtitle/releases/0.2
 [1.0]: https://github.com/gershnik/processtitle/releases/1.0
+[1.1]: https://github.com/gershnik/processtitle/releases/1.1

@@ -6,7 +6,7 @@
 import os
 import logging
 
-__version__ = '1.0'
+__version__ = '1.1'
 
 from ._processtitle import (
     prepare,
