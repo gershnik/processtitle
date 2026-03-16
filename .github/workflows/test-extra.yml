@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        remote_host: [freebsd-14, openbsd-7-5, netbsd-10, alpine-3, omnios]
+        remote_host: [freebsd-14, openbsd-7-5, netbsd-10, dragonfly, alpine-3, omnios]
         
     steps:
     - name: Run remote build
@@ -46,6 +46,10 @@ jobs:
         pip install pytest
         echo "::endgroup::"
         echo "::group::Build"
+        if [[ '${{ matrix.remote_host }}' == 'dragonfly' ]]; then
+          export CC=gcc11
+          export CXX=g++11
+        fi
         rm -rf build
         pip install -v .
         echo "::endgroup::"

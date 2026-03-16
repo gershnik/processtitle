@@ -18,12 +18,14 @@ IS_PLATFORM_UNSUPPORTED = sys.platform != "darwin" and \
                           not sys.platform.startswith("openbsd") and \
                           not sys.platform.startswith("netbsd") and \
                           not sys.platform.startswith("sunos") and \
+                          not sys.platform.startswith("dragonfly") and \
                           not sys.platform.startswith("win32")
 
 supported_platforms_only = pytest.mark.skipif(IS_PLATFORM_UNSUPPORTED, reason="unsupported platform")
 unsupported_platforms_only = pytest.mark.skipif(not IS_PLATFORM_UNSUPPORTED, reason="not an unsupported platform")
 darwin_only = pytest.mark.skipif(sys.platform != "darwin", reason="macOS only")
 linux_only = pytest.mark.skipif(sys.platform != "linux", reason="Linux only")
+unicode_supported_only = pytest.mark.skipif(sys.platform.startswith("dragonfly"), reason="Unicode is not well supported")
 subinterpreters_available = pytest.mark.skipif(sys.version_info < (3, 14), reason="subinterpreters require Python 3.14+")
 fork_available = pytest.mark.skipif(sys.platform.startswith("win32") or platform.python_implementation() == "GraalVM", 
                                     reason="fork is not supported on this platform")

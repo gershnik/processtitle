@@ -82,7 +82,7 @@ def get_title_from_system(pid: int|None = None):
     if retcode != 0:
         raise subprocess.CalledProcessError(retcode, proc.args)
     if ret is not None:
-        if plat.startswith('freebsd'):
+        if plat.startswith('freebsd') or plat.startswith('dragonfly'):
             suffix = ret.rfind(' (')
             if suffix >= 0:
                 ret = ret[0:suffix]

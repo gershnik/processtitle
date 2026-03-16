@@ -4,7 +4,7 @@
 import textwrap
 
 from .util import IS_GRAALPY, run_script, filter_stderr, grep_stderr, load_json_result
-from .conftest import supported_platforms_only, darwin_only, linux_only, unsupported_platforms_only
+from .conftest import supported_platforms_only, darwin_only, linux_only, unsupported_platforms_only, unicode_supported_only
 
 @supported_platforms_only
 def test_set_title():
@@ -57,6 +57,7 @@ def test_set_title_spaces():
     assert proc.returncode == 0
 
 @supported_platforms_only
+@unicode_supported_only
 def test_set_title_emoji():
     proc = run_script(text=textwrap.dedent('''
     import processtitle

@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 
 #define SPTEX_HAS_BSD 1
 
@@ -12,7 +12,7 @@ void bsdPrepare() {
 }
 
 bool bsdSetProcessTitle(const char * title) {
-    #if defined(__FreeBSD__)
+    #if defined(__FreeBSD__) || defined(__DragonFly__)
         setproctitle("-%s", title);
     #else
         setproctitle("%s", title);
