@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+- Support for DragonFly BSD
+- Ability to directly invoke the module and a wrapper script `processtitle`.
+  These portably print out the list of process IDs and their titles in the 
+  best possible way for each platform.
+
 ## [1.0] - 2026-03-13
 
 ### Added

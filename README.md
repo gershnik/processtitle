@@ -38,7 +38,7 @@ to be shown in the process list instead.
 ## Platform support
 
 The module will happily _run_ and do nothing on any [compatible system](#requirements) but the ones where it 
-actually _works_ (i.e. changes the process title) are: Linux, macOS, Windows, {Free|Net|Open}BSD and Illumos. See 
+actually _works_ (i.e. changes the process title) are: Linux, macOS, Windows, {Free|Net|Open|DragonFly}BSD and Illumos. See 
 [platform details](#platform-details) below for more information about each platform.
 
 In all cases only reasonably recent versions of each platform are supported. No attempt is made to work
@@ -94,6 +94,16 @@ to a non-empty value (which is not "0"). For example:
 ```bash
 SPT_DEBUG=1 your_script_that_uses_processtitle
 ```
+
+For troubleshooting and general convenience you can also call the module directly or via a wrapper script:
+```console
+$ processtitle
+$ #or
+$ python3 -m processtitle
+```
+
+This produces a list of process IDs and their titles by delegating to `ps` or Windows Powershell in a way 
+most appropriate to each platform. Run `processtitle -h` to see the available command line options.
 
 ## Thread and other safety
 
@@ -178,7 +188,7 @@ To change the title, `processtitle` uses the following methods:
 ### Windows
 
 On Windows you can see the process by looking at the process command line. You can see the command lines of running 
-processes in two ways:
+processes in three ways:
 
 1. Using powershell's `Get-WmiObject Win32_Process` call:
   ```powershell
@@ -189,18 +199,30 @@ processes in two ways:
   powershell -c "Get-WmiObject Win32_Process | Select-Object ProcessId, CommandLine"
   ```
 
-2. In Task Manager details view. If the "Command Line" column is not present, right-click the columns header,
+2. Using `processtitle` command line utility installed with this package. Run `processtitle -h` for 
+   details of available switches. The utility internally uses WMI but in a more sophisticated way,
+
+3. In Task Manager details view. If the "Command Line" column is not present, right-click the columns header,
   choose "Select columns" and check "Command Line" entry in the list.
+  
+> [!IMPORTANT]
+> Task Manager caches the command line of the process. If you had Task Manager open and showing the command
+> line and *then* changed it, you might need to restart it to show the updated value.
 
 To change the title, `processtitle` uses modifies/replaces partially-documented [RTL_USER_PROCESS_PARAMETERS](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-rtl_user_process_parameters) via undocumented or partially documented calls.
 
 ### BSDs
 
-On {Free|Net|Open}BSD you will be able to see the process title in the output of `ps` or `top` commands, as well, 
+On {Free|Net|Open|DragonFly}BSD you will be able to see the process title in the output of `ps` or `top` commands, as well, 
 as with any other tool that displays process info. All of these platforms will, in general, add the original 
 executable name (e.g. `python3`) to the actual title either as a prefix or a suffix.
 
-To change the title, `processtitle` uses documented `setproctitle()` call ([FreeBSD](https://man.freebsd.org/cgi/man.cgi?query=setproctitle&sektion=3&format=html), [NetBSD](https://man.netbsd.org/NetBSD-10.1/setproctitle.3), [OpenBSD](https://man.openbsd.org/setproctitle.3)). 
+> [!NOTE]
+> At the time of this writing the default compiler on DragonFly BSD is an ancient GCC 8. You will need to install
+> GCC 11 (available as a binary package) in order to build `processtitle`. Once installed:
+> `CC=gcc11 CXX=g++11 pip install processtitle`
+
+To change the title, `processtitle` uses documented `setproctitle()` call ([FreeBSD](https://man.freebsd.org/cgi/man.cgi?query=setproctitle&sektion=3&format=html), [NetBSD](https://man.netbsd.org/NetBSD-10.1/setproctitle.3), [OpenBSD](https://man.openbsd.org/setproctitle.3), [DragonFly](https://man.dragonflybsd.org/?command=setproctitle)). 
 
 
 ### Illumos
