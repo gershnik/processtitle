@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build sdist
         run: |
@@ -17,7 +17,7 @@ jobs:
           python -m build . --sdist
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sdist
           path: ./dist/*
@@ -29,7 +29,7 @@ jobs:
       matrix:
         #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
         python-version: [cp310, cp311, cp312, cp313, cp314, pp, gp]
-        arch: [x86_64, aarch64, ppc64le, riscv64]
+        arch: [x86_64, ppc64le, riscv64]
         exclude:
           - {python-version: pp, arch: ppc64le}
           - {python-version: pp, arch: riscv64}
@@ -38,9 +38,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up QEMU
+        if: ${{ matrix.arch != 'x86_64' }}
         uses: docker/setup-qemu-action@v4
 
       - name: Build wheels
@@ -51,7 +52,33 @@ jobs:
           CIBW_ENABLE: all
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
+        with:
+          name: wheel-linux-${{ matrix.python-version }}-${{matrix.arch}}
+          path: ./wheelhouse/*.whl
+
+  wheel-linux-arm:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
+        python-version: [cp310, cp311, cp312, cp313, cp314, pp, gp]
+        arch: [aarch64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.4.0
+        env:
+          CIBW_BUILD: ${{matrix.python-version}}*
+          CIBW_ARCHS: ${{matrix.arch}}
+          CIBW_ENABLE: all
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-linux-${{ matrix.python-version }}-${{matrix.arch}}
           path: ./wheelhouse/*.whl
@@ -66,7 +93,7 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.0
@@ -76,7 +103,7 @@ jobs:
           CIBW_ENABLE: all
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-macos-${{ matrix.python-version }}
           path: ./wheelhouse/*.whl
@@ -91,7 +118,7 @@ jobs:
 
     steps:
       - name: Checkout repos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.0
@@ -101,7 +128,7 @@ jobs:
           CIBW_ENABLE: all
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-windows-${{ matrix.python-version }}
           path: ./wheelhouse/*.whl
@@ -112,11 +139,12 @@ jobs:
     needs:
       - sdist
       - wheel-linux
+      - wheel-linux-arm
       - wheel-macos
       - wheel-windows
     steps:
       - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v7
         with:
           name: artifacts
           delete-merged: true
