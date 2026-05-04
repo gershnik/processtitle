@@ -6,15 +6,15 @@
 [![PyPI Downloads](https://static.pepy.tech/badge/processtitle)](https://pepy.tech/projects/processtitle)
 
 
-This Python extension module allows you to customize process "title" as reported by `ps`, `top`, Activity Monitor,
+This Python extension module allows you to customize the process "title" as reported by `ps`, `top`, Activity Monitor,
 Task Manager and similar tools.
 
-It is similar to the well known [py-setproctitle](https://github.com/dvarrazzo/py-setproctitle) module but,
-not being constrained by backward compatibility, does things a bit differently and, hopefully, makes things more convenient
-for a user. (If you are already familiar with `py-setproctitle` make sure to read [differences from py-setproctitle](#differences-from-py-setproctitle) section.)
+It is similar to the well-known [py-setproctitle](https://github.com/dvarrazzo/py-setproctitle) module but,
+not being constrained by backward compatibility, does things a bit differently - and hopefully 
+more conveniently - for the user. (If you are already familiar with `py-setproctitle`, make sure to read the [differences from py-setproctitle](#differences-from-py-setproctitle) section.)
 
-Modifying process title is useful in many cases. When you have many Python scripts, or, worse, many instances of the
-same Python script running on your system it is very hard to understand which one is which, if all you see in your process list
+Modifying the process title is useful in many cases. When you have many Python scripts, or worse, many instances of the
+same Python script running on your system, it is very hard to understand which one is which, if all you see in your process list
 is "Python" or "python3 same-script". Using this module allows your script to specify _what it is for_ or _what it is doing_
 to be shown in the process list instead.
 
@@ -37,17 +37,17 @@ to be shown in the process list instead.
 
 ## Platform support
 
-The module will happily _run_ and do nothing on any [compatible system](#requirements) but the ones where it 
+The module will happily _run_ and do nothing on any [compatible system](#requirements), but the systems where it 
 actually _works_ (i.e. changes the process title) are: Linux, macOS, Windows, {Free|Net|Open|DragonFly}BSD and Illumos. See 
 [platform details](#platform-details) below for more information about each platform.
 
-In all cases only reasonably recent versions of each platform are supported. No attempt is made to work
-on ancient Linux kernels, Windows XP etc. etc. If you are stuck with a very old system your best bet is 
+In all cases, only reasonably recent versions of each platform are supported. No attempt is made to work
+on ancient Linux kernels, Windows XP etc. etc. If you are stuck with a very old system, your best bet is 
 [py-setproctitle](https://github.com/dvarrazzo/py-setproctitle).
 
 ## Requirements
 
-* Python >= 3.10 capable of loading native extensions. In particular, CPython, PyPy and GraalPy are all supported.
+* Python >= 3.10, capable of loading native extensions. In particular, CPython, PyPy and GraalPy are all supported.
 * If your platform doesn't have a binary wheel available, you will need:
   * A C++ compiler capable of compiling C++20 (GCC 10.2 or above and CLang 13 or above are known to work)
   * Python development libraries available (like `python3-dev` package in most Linux distributions)
@@ -66,7 +66,7 @@ import processtitle
 processtitle.prepare(...optional config params...)
 
 if not processtitle.set_to("my fancy process"):
-    print("ooops, process title couldn't be set")
+    print("oops, process title couldn't be set")
 else:
     print(f"last set process title is {processtitle.last_set()}")
 ```
@@ -88,7 +88,7 @@ logging.basicConfig(...)
 logging.getLogger("processtitle").setLevel(logging.DEBUG)
 ```
 
-Alternatively, you can use `py-setproctitle` compatible method by setting `SPT_DEBUG` environment variable
+Alternatively, you can use a `py-setproctitle`-compatible method by setting `SPT_DEBUG` environment variable
 to a non-empty value (which is not "0"). For example:
 
 ```bash
@@ -102,20 +102,20 @@ $ #or
 $ python3 -m processtitle
 ```
 
-This produces a list of process IDs and their titles by delegating to `ps` or Windows Powershell in a way 
+This produces a list of process IDs and their titles by delegating to `ps` or Windows PowerShell in a way 
 most appropriate to each platform. Run `processtitle -h` to see the available command line options.
 
 ## Thread and other safety
 
 `processtitle` _itself_ is thread-safe - all its operations are protected by a mutex. However, 
 _the effects_ of changing process title are not. On every platform, changing the title modifies
-some globals process information. If this information is accessed by another thread at the same
-time Bad Things Will Happen. Therefore, it is advisable to only change the title before other
+some global process information. If this information is accessed by another thread at the same
+time, Bad Things Will Happen. Therefore, it is advisable to only change the title before other
 threads are running or when you are absolutely sure they are suspended.
 
 On some platforms, `processtitle` modifies pointers visible to native code (for example `argv[1]...` and 
-`environ` on many Unix systems). It never deallocates the memory pointed by these so any native code that 
-uses cached values of such pointer should be safe. Python's `sys.argv` and `os.environ` should be 
+`environ` on many Unix systems). It never deallocates the memory pointed to by these, so any native code that 
+uses cached values of such pointers should be safe. Python's `sys.argv` and `os.environ` should be 
 completely unaffected by any of these manipulations.
 
 
@@ -149,7 +149,7 @@ In addition:
 
 ### Linux
 
-On Linux you will be able to see the process title in the output of `ps` or `top` commands, as well, as with any other
+On Linux you will be able to see the process title in the output of `ps` or `top` commands, as well as with any other
 tool that displays process info.
 
 To change the title, `processtitle` uses the following methods:
@@ -163,12 +163,12 @@ To change the title, `processtitle` uses the following methods:
 On macOS there are 2 independent places where process title is shown: `ps`, `top` and similar commands and
 Activity Monitor. They take information from completely different places and modifying one doesn't modify the
 other. Unfortunately, the API required to change the title for Activity Monitor **cannot be used if your process
-later fork()-s without exec()**. If used in such a process, the forked process will most likely crash randomly and
+later `fork()`-s without exec()**. If used in such a process, the forked process will most likely crash randomly and
 unpredictably. Note that some popular libraries such as `gunicorn` may use fork() internally.
 
 > [!IMPORTANT]
 > Using fork without exec in Python on macOS (or any other platform) is, in general, dangerous because you rarely know
-> for sure whether the libraries your code depends upon are fork-safe. This is why `multiprocessing` library
+> for sure whether the libraries your code depends upon are fork-safe. This is why the `multiprocessing` library
 > [avoids fork by default](https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods)
 > on macOS and, recently, on all platforms.
 
@@ -187,10 +187,10 @@ To change the title, `processtitle` uses the following methods:
 
 ### Windows
 
-On Windows you can see the process by looking at the process command line. You can see the command lines of running 
+On Windows you can see the process name by looking at the process command line. You can see the command lines of running 
 processes in three ways:
 
-1. Using powershell's `Get-WmiObject Win32_Process` call:
+1. Using PowerShell's `Get-WmiObject Win32_Process` call:
   ```powershell
   Get-WmiObject Win32_Process | Select-Object ProcessId, CommandLine
   ```
@@ -200,7 +200,7 @@ processes in three ways:
   ```
 
 2. Using `processtitle` command line utility installed with this package. Run `processtitle -h` for 
-   details of available switches. The utility internally uses WMI but in a more sophisticated way,
+   details of available switches. The utility internally uses WMI but in a more sophisticated way.
 
 3. In Task Manager details view. If the "Command Line" column is not present, right-click the columns header,
   choose "Select columns" and check "Command Line" entry in the list.
@@ -209,11 +209,11 @@ processes in three ways:
 > Task Manager caches the command line of the process. If you had Task Manager open and showing the command
 > line and *then* changed it, you might need to restart it to show the updated value.
 
-To change the title, `processtitle` uses modifies/replaces partially-documented [RTL_USER_PROCESS_PARAMETERS](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-rtl_user_process_parameters) via undocumented or partially documented calls.
+To change the title, `processtitle` modifies/replaces partially-documented [RTL_USER_PROCESS_PARAMETERS](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-rtl_user_process_parameters) via undocumented or partially documented calls.
 
 ### BSDs
 
-On {Free|Net|Open|DragonFly}BSD you will be able to see the process title in the output of `ps` or `top` commands, as well, 
+On {Free|Net|Open|DragonFly}BSD you will be able to see the process title in the output of `ps` or `top` commands, as well 
 as with any other tool that displays process info. All of these platforms will, in general, add the original 
 executable name (e.g. `python3`) to the actual title either as a prefix or a suffix.
 
