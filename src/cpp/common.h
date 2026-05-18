@@ -28,15 +28,15 @@ template<class T>
 constexpr bool dependentFalse = false;
 
 struct FreeDeleter {
-	void operator()(void * ptr) { free(ptr); }
+    void operator()(void * ptr) { free(ptr); }
 };
 
 template<class T>
 requires(
-	(!std::is_array_v<T> && std::is_trivially_destructible_v<T>) ||
-	(std::is_array_v<T> && std::is_trivially_destructible_v<std::remove_all_extents_t<T>>)
+    (!std::is_array_v<T> && std::is_trivially_destructible_v<T>) ||
+    (std::is_array_v<T> && std::is_trivially_destructible_v<std::remove_all_extents_t<T>>)
 )
-using unqiue_malloc_membuf = std::unique_ptr<T, FreeDeleter>;
+using unique_malloc_membuf = std::unique_ptr<T, FreeDeleter>;
 
 #ifndef _WIN32
 
