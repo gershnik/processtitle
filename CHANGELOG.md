@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Fixed
+- A small memory leak and a thread-safety bug in `last_set()`
+- Possible (but unlikely) crash on Linux if `PR_SET_MM` fails for some reason
+- Potential hang when using command-line interface on systems where `ps` is a symlink
+- Numerous typos in code and typos/grammar in documentation
+
 ## [1.1] - 2026-03-16
 
 ### Added
