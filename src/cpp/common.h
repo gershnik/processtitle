@@ -64,8 +64,7 @@ public:
     
     static auto open(const char * path, int oflag, mode_t mode, std::error_code & err) -> FileDescriptor {
 
-        auto cpath = path;
-        auto fd = ::open(cpath, oflag, mode);
+        auto fd = ::open(path, oflag, mode);
         if (fd < 0) {
             fd = -1;
             err = std::error_code(errno, std::system_category());
@@ -77,8 +76,7 @@ public:
 
     static auto open(const char * path, int oflag, mode_t mode) -> FileDescriptor {
 
-        auto cpath = path;
-        auto fd = ::open(cpath, oflag, mode);
+        auto fd = ::open(path, oflag, mode);
         if (fd < 0) {
             fd = -1;
             throw std::system_error(std::error_code(errno, std::system_category()));
