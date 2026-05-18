@@ -102,7 +102,6 @@ bool windowsSetProcessTitle(const char * title) {
         memcpy(params->CommandLine.Buffer, buf.data(), length * sizeof(wchar_t));
         params->CommandLine.Buffer[length] = 0;
         params->CommandLine.Length = USHORT(length * sizeof(wchar_t));
-        return true;
     } else {
         // !!DANGER ZONE!!
         // We are going to replace peb->ProcessParameters.
@@ -128,7 +127,6 @@ bool windowsSetProcessTitle(const char * title) {
         newParams->CommandLine.Length = USHORT(length * sizeof(wchar_t));
         newParams->CommandLine.MaximumLength = USHORT((length + 1) * sizeof(wchar_t));
         peb->ProcessParameters = (RTL_USER_PROCESS_PARAMETERS *)newParams;
-        return true;
     }
 
     return true;
