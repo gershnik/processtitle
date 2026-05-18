@@ -91,7 +91,7 @@ static int spt_copyenv(int envc, char * envp[])
         *eq = '=';
 
         if (error) {
-#ifdef HAVE_CLEARENV
+#ifdef SPTEX_HAVE_CLEARENV
             /* Because the old environ might not be available
              * anymore we will make do with the shallow copy. */
             environ = envcopy;
