@@ -1,10 +1,7 @@
 # Copyright (c) 2026, Eugene Gershnik
 # SPDX-License-Identifier: BSD-3-Clause
 
-"""SetProcTilteEx package"""
-
-import os
-import logging
+"""processtitle package"""
 
 __version__ = '1.1'
 
