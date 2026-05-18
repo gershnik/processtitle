@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.2] - 2026-05-17
+
 ### Fixed
 - A small memory leak and a thread-safety bug in `last_set()`
 - Possible (but unlikely) crash on Linux if `PR_SET_MM` fails for some reason
@@ -42,3 +44,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [0.2]: https://github.com/gershnik/processtitle/releases/0.2
 [1.0]: https://github.com/gershnik/processtitle/releases/1.0
 [1.1]: https://github.com/gershnik/processtitle/releases/1.1
+[1.2]: https://github.com/gershnik/processtitle/releases/1.2
