@@ -27,7 +27,6 @@ if sysconfig.get_platform().startswith('linux') and \
 if sysconfig.get_platform().startswith('macosx') and \
         sysconfig.get_config_var('implementation') == 'PyPy' and \
         os.environ.get('LDCXXSHARED') is None    :
-    ldcxxshared = sysconfig.get_config_var('LDCXXSHARED')
     ldshared = sysconfig.get_config_var('LDSHARED')
     ldcxxshared = re.sub(r'^gcc', 'g++', ldshared)
     os.environ['LDCXXSHARED'] = ldcxxshared
