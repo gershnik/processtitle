@@ -1,6 +1,10 @@
 // Copyright (c) 2026, Eugene Gershnik
 // SPDX-License-Identifier: BSD-3-Clause
 
+#ifndef HEADER_SPTEX_BSD_H_INCLUDED
+#define HEADER_SPTEX_BSD_H_INCLUDED
+
+
 #include "common.h"
 
 #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
@@ -20,5 +24,7 @@ bool bsdSetProcessTitle(const char * title) {
 
     return true;
 }
+
+#endif
 
 #endif
