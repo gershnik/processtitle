@@ -140,7 +140,7 @@ struct SetToMethod : PythonMethod<SetToMethod> {
                                        .build();
     }
 
-    PyObject * operator()(PyObject * module, const std::string & title) {
+    PyObject * operator()(PyObject * module, std::string && title) {
 
         ThreadStateSetter state(module);
 
@@ -166,6 +166,7 @@ struct LastSetMethod : PythonMethod<LastSetMethod> {
 
     PyObject * operator()(PyObject * module) {
         ThreadStateSetter state(module);
+        std::scoped_lock guard(g_globalStateMutex);
         return toPython(g_lastSetTitle).release();
     }
 };

@@ -44,7 +44,7 @@ def _doUnix(args):
         return 1
     
     test = Path(ps)
-    while test.is_symlink():
+    if test.is_symlink():
         dest = test.readlink()
         if dest.name == 'busybox':
             return _doBusybox(args, Path(ps))

@@ -34,6 +34,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      # avoid setup-python noise on macOS
+      - name: Clear pre-baked pip cache
+        if: runner.os == 'macOS'
+        run: rm -rf ~/Library/Caches/pip
+
       - name: Set up Python
         uses: actions/setup-python@v6
         id: setup-python

@@ -30,20 +30,20 @@ def run_script(*, text: str|None = None, cmd = None):
                             stderr=subprocess.PIPE)
 
 
-def _is_pypy_grabage(line: str):
+def _is_pypy_garbage(line: str):
     return IS_PYPY and line.startswith('Warning: cannot find your CPU L2 & L3 cache size')
 
 def filter_stderr(stderr: str):
     lines = []
     for line in stderr.splitlines():
-        if _is_pypy_grabage(line):
+        if _is_pypy_garbage(line):
             continue
         lines.append(line)
     return '\n'.join(lines)
 
 def grep_stderr(pattern: str | re.Pattern[str], stderr: str):
     for line in stderr.splitlines():
-        if _is_pypy_grabage(line):
+        if _is_pypy_garbage(line):
             continue
         if re.search(pattern, line):
             return True
@@ -148,4 +148,4 @@ def get_linux_title_pair(pid: int|None = None):
     
     if IS_ALPINE:
         return (title_from_field('args'), title_from_field('comm'))
-    return (title_from_field(field) for field in ('cmd', 'comm'))
+    return (title_from_field('cmd'),  title_from_field('comm'))

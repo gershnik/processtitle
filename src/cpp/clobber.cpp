@@ -91,7 +91,7 @@ static int spt_copyenv(int envc, char * envp[])
         *eq = '=';
 
         if (error) {
-#ifdef HAVE_CLEARENV
+#ifdef SPTEX_HAVE_CLEARENV
             /* Because the old environ might not be available
              * anymore we will make do with the shallow copy. */
             environ = envcopy;
@@ -174,6 +174,9 @@ Clobber::Clobber(int argc, char *argv[], char *envp[]) {
 }
 
 void Clobber::setTitle(const char * title) {
+
+    if (!m_copyOfArg0 || m_clobberArea.empty())
+        return;
 
     // Use copy in case argv[0] is passed.
     std::string titleCopy;

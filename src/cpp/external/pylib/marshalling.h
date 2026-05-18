@@ -347,7 +347,7 @@ inline auto fromPython(KnownType<double> obj, NameProvider<double>) -> FromPytho
 
 inline auto toPython(std::string_view str) -> isptr::py_ptr<PyObject> {
     auto obj = PyUnicode_DecodeUTF8(str.data(), str.size(), "replace");
-    return isptr::py_retain(obj);
+    return isptr::py_attach(obj);
 }
 
 inline auto toPython(const char * str) -> isptr::py_ptr<PyObject> {

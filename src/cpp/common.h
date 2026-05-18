@@ -27,6 +27,17 @@ struct Overloads : Ts... { using Ts::operator()...; };
 template<class T>
 constexpr bool dependentFalse = false;
 
+struct FreeDeleter {
+    void operator()(void * ptr) { free(ptr); }
+};
+
+template<class T>
+requires(
+    (!std::is_array_v<T> && std::is_trivially_destructible_v<T>) ||
+    (std::is_array_v<T> && std::is_trivially_destructible_v<std::remove_all_extents_t<T>>)
+)
+using unique_malloc_membuf = std::unique_ptr<T, FreeDeleter>;
+
 #ifndef _WIN32
 
 class FileDescriptor {
@@ -53,8 +64,7 @@ public:
     
     static auto open(const char * path, int oflag, mode_t mode, std::error_code & err) -> FileDescriptor {
 
-        auto cpath = path;
-        auto fd = ::open(cpath, oflag, mode);
+        auto fd = ::open(path, oflag, mode);
         if (fd < 0) {
             fd = -1;
             err = std::error_code(errno, std::system_category());
@@ -66,8 +76,7 @@ public:
 
     static auto open(const char * path, int oflag, mode_t mode) -> FileDescriptor {
 
-        auto cpath = path;
-        auto fd = ::open(cpath, oflag, mode);
+        auto fd = ::open(path, oflag, mode);
         if (fd < 0) {
             fd = -1;
             throw std::system_error(std::error_code(errno, std::system_category()));

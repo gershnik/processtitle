@@ -75,7 +75,7 @@ static std::string readAll(const FileDescriptor & fd) {
     size_t offset = 0;
     for ( ; ; ) {
         std::error_code err;
-		ssize_t bytes_read = readFile(fd, line.data() + offset, line.size() - offset, err);
+        ssize_t bytes_read = readFile(fd, line.data() + offset, line.size() - offset, err);
         if (err) {
             if (err.value() == EINTR)
                 continue;
@@ -89,7 +89,7 @@ static std::string readAll(const FileDescriptor & fd) {
         if (offset == line.size()) {
             line.resize(line.size() + 32);
         }
-	}
+    }
 }
 
 void linuxPrepare() {
@@ -186,7 +186,7 @@ static bool useSetMm(const char * title) {
 
     static char * proctitle = nullptr;
 
-    std::unique_ptr<char> tmp_proctitle{(char *)malloc(full_title_len)};
+    unique_malloc_membuf<char> tmp_proctitle{(char *)malloc(full_title_len)};
     if (!tmp_proctitle) {
         logDebug("cannot allocate " + std::to_string(full_title_len) + " bytes");
         return false;
