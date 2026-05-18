@@ -11,7 +11,7 @@ public:
     void setTitle(const char * title);
 private:
     // Copy of original value. Allocated, never freed
-    const char * m_copyOfArg0;
+    const char * m_copyOfArg0 = nullptr;
 
     // Title space available. 
     std::span<char> m_clobberArea;

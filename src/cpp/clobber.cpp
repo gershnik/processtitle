@@ -175,6 +175,9 @@ Clobber::Clobber(int argc, char *argv[], char *envp[]) {
 
 void Clobber::setTitle(const char * title) {
 
+    if (!m_copyOfArg0 || m_clobberArea.empty())
+        return;
+
     // Use copy in case argv[0] is passed.
     std::string titleCopy;
     if (title) {
