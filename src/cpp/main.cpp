@@ -140,7 +140,7 @@ struct SetToMethod : PythonMethod<SetToMethod> {
                                        .build();
     }
 
-    PyObject * operator()(PyObject * module, const std::string & title) {
+    PyObject * operator()(PyObject * module, std::string && title) {
 
         ThreadStateSetter state(module);
 
