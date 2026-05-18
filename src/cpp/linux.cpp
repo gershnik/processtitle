@@ -186,7 +186,7 @@ static bool useSetMm(const char * title) {
 
     static char * proctitle = nullptr;
 
-    std::unique_ptr<char> tmp_proctitle{(char *)malloc(full_title_len)};
+    unqiue_malloc_membuf<char> tmp_proctitle{(char *)malloc(full_title_len)};
     if (!tmp_proctitle) {
         logDebug("cannot allocate " + std::to_string(full_title_len) + " bytes");
         return false;
