@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+- Official support for Python 3.15
+
 ## [1.2] - 2026-05-17
 
 ### Fixed
