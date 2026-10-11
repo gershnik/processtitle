@@ -16,12 +16,12 @@ from pathlib import Path
 
 from . import __version__
 
-def _doBusybox(args, ps: Path):
+def _do_busybox(args, ps: Path):
     cmd = [ps, '-opid,args']
     if args.pids is None:
-        proc = subprocess.run(cmd)
+        proc = subprocess.run(cmd, check=False)
         return proc.returncode
-    
+
     encoding = locale.getpreferredencoding(do_setlocale=False)
     proc = subprocess.Popen(cmd, encoding=encoding, stdout=subprocess.PIPE)
     assert proc.stdout is not None
@@ -36,21 +36,21 @@ def _doBusybox(args, ps: Path):
     retcode = proc.wait()
     return retcode
 
-def _doUnix(args):
+def _do_unix(args):
     path = os.environ.get('PATH', '/bin:/usr/bin')
     ps = shutil.which('ps', path=path)
     if ps is None:
         print('ps utility not found', file=sys.stderr, flush=True)
         return 1
-    
+
     test = Path(ps)
     if test.is_symlink():
         dest = test.readlink()
         if dest.name == 'busybox':
-            return _doBusybox(args, Path(ps))
-        
+            return _do_busybox(args, Path(ps))
+
     cmd = [ps]
-    
+
     if sys.platform.startswith("sunos"):
         cmd += ['-F', '-opid,args']
     else:
@@ -63,17 +63,17 @@ def _doUnix(args):
             cmd += ['-p', ','.join([str(pid) for pid in args.pids])]
     elif args.show_all:
         cmd += ['-A']
-    
-    proc = subprocess.run(cmd)
+
+    proc = subprocess.run(cmd, check=False)
     return proc.returncode
 
 
-def _doWin(args):
+def _do_win(args):
     powershell = shutil.which('powershell')
     if powershell is None:
         print('powershell not found', file=sys.stderr, flush=True)
         return 1
-    
+
     pids = ''
     filter = ''
     if not args.show_all:
@@ -93,9 +93,9 @@ def _doWin(args):
     if ($s -eq '') { exit 1 }
     $s
     ''').replace('\n', '\r\n')
-    
+
     cmd = [powershell, '-NonInteractive', '-NoLogo', '-Command', '-']
-    proc = subprocess.run(cmd, input=input, encoding='utf-8')
+    proc = subprocess.run(cmd, input=input, encoding='utf-8', check=False)
     return proc.returncode
 
 def main():
@@ -105,18 +105,19 @@ def main():
         prog='processtitle',
         description='Portably lists process IDs and their titles'
     )
-    parser.add_argument('-a', '--all', action='store_true', dest='show_all', 
+    parser.add_argument('-a', '--all', action='store_true', dest='show_all',
                         help="show all (as opposed to 'some') processes. "
                              "The definition of 'some' is platform dependent.")
-    parser.add_argument('-p', '--pid', metavar='PID', type=int, nargs='+', dest='pids', help='limit output to these process IDs')
+    parser.add_argument('-p', '--pid', metavar='PID', type=int, nargs='+', dest='pids', 
+                        help='limit output to these process IDs')
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
 
     args = parser.parse_args()
 
     if not sys.platform.startswith("win32"):
-        return _doUnix(args)
+        return _do_unix(args)
     else:
-        return _doWin(args)
+        return _do_win(args)
 
 if __name__ == '__main__':
     sys.exit(main())

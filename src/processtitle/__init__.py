@@ -16,4 +16,3 @@ __all__ = [
     'set_to',
     'last_set'
 ]
-

@@ -1,7 +1,7 @@
 # Copyright (c) 2026, Eugene Gershnik
 # SPDX-License-Identifier: BSD-3-Clause
 
-def prepare(*, fork_safe_only: bool = False) -> None: 
+def prepare(*, fork_safe_only: bool = False) -> None:
     """Initialize the library
     
     This method must be called prior to any calls to set_to.
@@ -18,7 +18,7 @@ def prepare(*, fork_safe_only: bool = False) -> None:
     """
     ...
 
-def set_to(title: str) -> bool: 
+def set_to(title: str) -> bool:
     """Set process title
     
     Args:
