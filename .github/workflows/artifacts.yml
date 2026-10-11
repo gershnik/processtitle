@@ -101,6 +101,7 @@ jobs:
           CIBW_BUILD: ${{matrix.python-version}}*
           CIBW_ARCHS: x86_64 arm64 universal2
           CIBW_ENABLE: all
+          PY_DISCOVERY_TIMEOUT: "120"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
