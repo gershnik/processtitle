@@ -89,7 +89,9 @@ jobs:
       fail-fast: false
       matrix:
         #no need to add "t" the glob pattern in CIBW_BUILD takes care of that
-        python-version: [cp310, cp311, cp312, cp313, cp314, cp315, pp, gp]
+        python-version: [cp310, cp311, cp312, cp313, cp314, cp315, pp, 
+                         #gp - re-enable when cibuildwheel fixes its bugs
+                         ]
 
     steps:
       - name: Checkout repos
