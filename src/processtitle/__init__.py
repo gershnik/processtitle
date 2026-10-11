@@ -3,7 +3,7 @@
 
 """processtitle package"""
 
-__version__ = '1.2'
+__version__ = '1.3'
 
 from ._processtitle import (
     prepare,

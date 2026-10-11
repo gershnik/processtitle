@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.3] - 2026-10-11
+
 ### Added
 - Official support for Python 3.15
 
@@ -48,3 +50,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [1.0]: https://github.com/gershnik/processtitle/releases/1.0
 [1.1]: https://github.com/gershnik/processtitle/releases/1.1
 [1.2]: https://github.com/gershnik/processtitle/releases/1.2
+[1.3]: https://github.com/gershnik/processtitle/releases/1.3
