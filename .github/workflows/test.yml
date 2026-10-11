@@ -25,14 +25,14 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-24.04, windows-latest]
         python-version: [
-          "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t",
+          "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t", "3.15",
           "pypy-3.10", "pypy-3.11",
           "graalpy-25.0"
         ]
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # avoid setup-python noise on macOS
       - name: Clear pre-baked pip cache
@@ -40,7 +40,7 @@ jobs:
         run: rm -rf ~/Library/Caches/pip
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         id: setup-python
         with:
           python-version: ${{matrix.python-version}}
