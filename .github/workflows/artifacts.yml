@@ -126,6 +126,7 @@ jobs:
           CIBW_BUILD: ${{matrix.python-version}}*
           CIBW_ARCHS: AMD64 ARM64
           CIBW_ENABLE: all
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: ""
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
